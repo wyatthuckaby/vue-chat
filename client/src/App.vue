@@ -1,11 +1,12 @@
 <template>
 	<div>
 		<div v-if="!joined" class="text-center">
-			<form>
+			<form @submit.prevent="join">
 				<div class="form-group">
-					<input type="text" max="12" class="form-control input-lg text-center" placeholder="Name" v-model="name">
+					<input type="text" max="12" class="form-control input-lg text-center" placeholder="Name" v-model="user.name">
+					<input type="text" max="12" class="form-control input-lg text-center" placeholder="Room" v-model="user.room">
 				</div>
-				<button class="btn btn-primary btn-lg" type="button" @click="join">Join Chat</button>
+				<button class="btn btn-primary btn-lg" type="submit">Join Chat</button>
 			</form>
 		</div>
 		<div v-if="joined">
@@ -14,22 +15,37 @@
 					<div class="col-sm-2 text-right">
 						<span class="name">{{ item.user }}</span>
 					</div>
-					<div class="col-sm-10">
-						<span class="message">{{ item.message }}</span>
+					<div v-if="item.message.type == 'text'" class="col-sm-10">
+						<span>{{ item.message.body }}</span>
+					</div>
+					<div v-else-if="item.message.type == 'imgurl'" class="col-sm-10">
+						<span><img :src="item.message.body"></span>
+					</div>
+					<div v-else-if="item.message.type == 'link'" class="col-sm-10">
+						<span><a target="_blank" :href="item.message.body">{{ item.message.body }}</a></span>
 					</div>
 				</div>
 			</div>
-			<div class="text-center">
-				<form>
-					<div class="form-group">
-						<input type="text" class="form-control input-lg text-center" placeholder="Message" v-model="message">
+			<div class="form-group row">
+				<form @submit.prevent="send">
+					<div class="col-xs-8">
+						<input type="text" class="form-control input-lg text-center" placeholder="Message" v-model="message.body">
+					</div>
+					<div class="col-xs-2">
+						<select class="form-control" v-model="message.type">
+								<option value="text">Text</option>
+								<option value="imgurl">Image</option>
+								<option value="link">Link</option>
+						</select>
+					</div>
+					<div class="col-xs-2">
+						<button class="btn btn-primary btn-lg" type="submit">Send</button>
 					</div>
 				</form>
 
 			</div>
 			<div class="text-center">
-					<button class="btn btn-primary btn-lg" type="button" @click="send">Send</button>
-					<button class="btn btn-primary btn-lg" type="button" @click="leave">Leave Chat</button>
+				<button class="btn btn-danger btn-lg" type="button" @click="leave">Leave Chat</button>
 			</div>
 		</div>
 	</div>
@@ -42,8 +58,14 @@
 		name: 'app',
 		data: function () {
 			return {
-				name: '',
-				message: ''
+				user: {
+					name: '',
+					room: ''
+				},
+				message: {
+					body: '',
+					type: 'text'
+				}
 			}
 		},
 		computed: mapState({
@@ -56,9 +78,9 @@
 		}),
 		methods: {
 			join: function () {
-				if (this.name) {
+				if (this.user.name) {
 					this.$store.dispatch('setJoined', true);
-					this.$socket.emit('join', this.name);
+					this.$socket.emit('join', this.user);
 				}
 			},
 			leave: function () {
@@ -66,11 +88,13 @@
 				this.$store.dispatch('clearMessages');
 				this.$socket.emit('leave');
 			},
-			send: function () {
-				if (this.message) {
-					this.messages.push({ user: this.name, message: 'Test this.' });
+			send: function (message) {
+				if (message) {
 					this.$socket.emit('message', this.message);
-					this.message = '';
+					this.message = {
+						body: '',
+						type: 'text'
+					}
 				}
 			}
 		},
@@ -125,8 +149,9 @@
 		border-radius: 6px;
 		padding: 10px;
 		margin-bottom: 10px;
-		max-height: 500px;
-		overflow-y: auto;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		height: 500px;
 	}
 
 	.name {
