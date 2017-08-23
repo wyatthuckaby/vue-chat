@@ -19,7 +19,7 @@
 						<span>{{ item.message.body }}</span>
 					</div>
 					<div v-else-if="item.message.type == 'imgurl'" class="col-sm-10">
-						<span><img :src="item.message.body"></span>
+						<span><img :src="item.message.body" class="chatimage"></span>
 					</div>
 					<div v-else-if="item.message.type == 'link'" class="col-sm-10">
 						<span><a target="_blank" :href="item.message.body">{{ item.message.body }}</a></span>
@@ -123,6 +123,10 @@
 		text-align: center;
 		color: #2c3e50;
 		margin-top: 60px;
+	}
+
+	.chatimage {
+		max-width: 800px;
 	}
 
 	h1,
