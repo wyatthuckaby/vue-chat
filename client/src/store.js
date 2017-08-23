@@ -15,6 +15,9 @@ const mutations = {
 	},
 	addMessage(state, payload) {
 		state.messages.push(payload);
+	},
+	clearMessages(state) {
+		state.messages = [];
 	}
 };
 
@@ -24,6 +27,9 @@ const actions = {
 	},
 	addMessage({ commit, state }, payload) {
 		commit('addMessage', payload);
+	},
+	clearMessages({ commit, state }) {
+		commit('clearMessages');
 	}
 };
 
