@@ -23,27 +23,28 @@ server.listen(3000, function() {
 
 io.on('connection', function (socket) {
 
-	socket.join('BCW', function () {
+	// socket.join( function () {
 		
-	});
+	// });
 
 	socket.on('join', function (user) {
 		console.log(user);
 		if (user.name) {
-			socket.user = user.name;
-			io.to(user.room).emit('user', user.name);
-
+			socket.user = user;
+			socket.join(user.room);
+			io.to(user.room).emit('user', socket.user.name);
+			console.log(socket.user);
 			roomRouter.addRoom(user.room);
 		}	
 	});
 
 	socket.on('leave', function () {
-		io.to('BCW').emit('left', socket.user);	
+		io.to(socket.user.room).emit('left', socket.user);	
 	});
 
 	socket.on('message', function (text) {
 		if (text) {
-			io.to('BCW').emit('message', { user: socket.user, message: text });
+			io.to(socket.user.room).emit('message', { user: socket.user.name, message: text });
 			console.log(text);
 		}	
 	});
