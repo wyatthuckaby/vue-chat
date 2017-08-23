@@ -5,7 +5,10 @@ Vue.use(Vuex);
 
 const state = {
 	joined: false,
-	name: '',
+	user: {
+		name: '',
+		room: ''
+	},
 	messages: []
 };
 
@@ -14,6 +17,7 @@ const mutations = {
 		state.joined = payload;
 	},
 	addMessage(state, payload) {
+		console.log(payload)
 		state.messages.push(payload);
 	},
 	clearMessages(state) {
