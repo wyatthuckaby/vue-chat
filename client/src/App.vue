@@ -20,7 +20,16 @@
 				</div>
 			</div>
 			<div class="text-center">
-				<button class="btn btn-primary btn-lg" type="button" @click="leave">Leave Chat</button>
+				<form>
+					<div class="form-group">
+						<input type="text" class="form-control input-lg text-center" placeholder="Message" v-model="message">
+					</div>
+				</form>
+
+			</div>
+			<div class="text-center">
+					<button class="btn btn-primary btn-lg" type="button" @click="send">Send</button>
+					<button class="btn btn-primary btn-lg" type="button" @click="leave">Leave Chat</button>
 			</div>
 		</div>
 	</div>
@@ -33,7 +42,8 @@
 		name: 'app',
 		data: function () {
 			return {
-				name: ''
+				name: '',
+				message: ''
 			}
 		},
 		computed: mapState({
@@ -52,17 +62,25 @@
 				}
 			},
 			leave: function () {
-
+				this.$store.dispatch('setJoined', false);
+				this.$store.dispatch('clearMessages');
+				this.$socket.emit('leave');
 			},
-			send: function (message) {
-				if (message) {
-					this.$socket.emit('message', message);
+			send: function () {
+				if (this.message) {
+					this.messages.push({ user: this.name, message: 'Test this.' });
+					this.$socket.emit('message', this.message);
+					this.message = '';
 				}
 			}
 		},
 		sockets: {
 			user: function (name) {
 				var data = { user: name, message: 'Has joined the chat.' };
+				this.$store.dispatch('addMessage', data);
+			},
+			left: function (name) {
+				var data = { user: name, message: 'Has left the chat.' };
 				this.$store.dispatch('addMessage', data);
 			},
 			message: function (data) {
@@ -107,6 +125,8 @@
 		border-radius: 6px;
 		padding: 10px;
 		margin-bottom: 10px;
+		max-height: 500px;
+		overflow-y: auto;
 	}
 
 	.name {
@@ -119,6 +139,11 @@
 		border-radius: 5px !important;
 		background: #E0EDFF;
 		padding: 5px 12px;
+		margin: 3px;
 		font-size: 15px;
+	}
+
+	.row {
+		margin-bottom: 5px;
 	}
 </style>
