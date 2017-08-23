@@ -1,13 +1,24 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var port = process.env.PORT || 3000;
+var serverConf = require('./config/serverconfig.js');
+var database = require('./config/dbconfig');
+//var port = process.env.PORT || 3000;
 var io = require('socket.io')(server);
 
 app.use(express.static(__dirname + '/../client'));
 
-server.listen(port, function () {
-	console.log('Server listening at port %d', port);
+
+var roomRouter = require ('./routes/room-route')
+app.use ('/rooms', roomRouter.router);
+
+server.listen(3000, function() {
+    //Success
+    console.log(`Unix Socket - [ OK ]`);
+}).on('error', function(err) {
+    //fail
+    console.log(err);
+    console.log(`Unix Socket - [FAIL]`);
 });
 
 io.on('connection', function (socket) {
@@ -16,11 +27,13 @@ io.on('connection', function (socket) {
 		
 	});
 
-	socket.on('join', function (room, name) {
+	socket.on('join', function (user) {
+		console.log(user);
+		if (user.name) {
+			socket.user = user.name;
+			io.to(user.room).emit('user', user.name);
 
-		if (name) {
-			socket.user = name;
-			io.to('BCW').emit('user', name);
+			roomRouter.addRoom(user.room);
 		}	
 	});
 
@@ -31,6 +44,7 @@ io.on('connection', function (socket) {
 	socket.on('message', function (text) {
 		if (text) {
 			io.to('BCW').emit('message', { user: socket.user, message: text });
+			console.log(text);
 		}	
 	});
 
