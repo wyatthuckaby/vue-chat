@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import $ from 'jquery'
 
 Vue.use(Vuex);
 
@@ -9,7 +10,8 @@ const state = {
 		name: '',
 		room: ''
 	},
-	messages: []
+	messages: [],
+	rooms: []
 };
 
 const mutations = {
@@ -22,6 +24,9 @@ const mutations = {
 	},
 	clearMessages(state) {
 		state.messages = [];
+	},
+	getRooms(state, payload) {
+		state.rooms = payload
 	}
 };
 
@@ -34,6 +39,12 @@ const actions = {
 	},
 	clearMessages({ commit, state }) {
 		commit('clearMessages');
+	},
+	getRooms({ commit, state }) {
+		$.get('//192.168.0.93:3000/rooms')
+		.then(payload => {
+			commit('getRooms', payload)
+		})
 	}
 };
 

@@ -7,10 +7,22 @@
 		<div v-if="!joined" class="text-center">
 			<form @submit.prevent="join">
 				<div class="form-group">
-					<input type="text" max="12" class="form-control input-lg text-center" placeholder="Name" v-model="user.name">
-					<input type="text" max="12" class="form-control input-lg text-center" placeholder="Room" v-model="user.room">
+					<div class="col-xs-12">
+						<input type="text" max="12" class="form-control input-lg text-center" placeholder="Name" v-model="user.name">
+					</div>
+					<div class="col-xs-8">
+						<input type="text" max="12" class="form-control input-lg text-center" placeholder="Room" v-model="user.room">
+					</div>
+					<div class="col-xs-4">
+						<select class="form-control" v-model="user.room">
+								<option disabled value="">Choose existing room</option>
+								<option v-for="room in rooms">{{ room.title }}</option>
+						</select>
+					</div>
 				</div>
-				<button class="btn btn-primary btn-lg" type="submit">Join Chat</button>
+				<div class="col-xs-12">
+					<button class="btn btn-primary btn-lg" type="submit">Join Chat</button>
+				</div>
 			</form>
 		</div>
 		<div v-if="joined">
@@ -72,12 +84,18 @@
 				}
 			}
 		},
+		mounted() {
+			this.$store.dispatch('getRooms')
+		},
 		computed: mapState({
 			joined(state) {
 				return state.joined;
 			},
 			messages(state) {
 				return state.messages;
+			},
+			rooms(state) {
+				return state.rooms
 			}
 		}),
 		methods: {
@@ -105,11 +123,11 @@
 		sockets: {
 			join: function (name) {
 				console.log("Joined");
-				var data = { user: name.name, message: {body: 'Has joined the room.', type: 'text'} };
+				var data = { user: name.name, message: { body: 'Has joined the room.', type: 'text' } };
 				this.$store.dispatch('addMessage', data);
 			},
 			left: function (name) {
-				var data = { user:  name.name, message:  {body: 'Has left the room.', type: 'text'} };
+				var data = { user: name.name, message: { body: 'Has left the room.', type: 'text' } };
 				this.$store.dispatch('addMessage', data);
 			},
 			message: function (data) {
@@ -121,7 +139,6 @@
 </script>
 
 <style>
-
 	.title {
 		text-align: center;
 		color: slateblue;
