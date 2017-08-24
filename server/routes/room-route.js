@@ -12,15 +12,22 @@ router.get ("/", (req,res,next) =>{
 	});
 });
 
+
+
+
+
 module.exports.addRoom = function(str){
 	Rooms.find({}).then((results) =>{
 		for (result in results){
-			if (str == results[result])
+			if (str == results[result].title){
 				return;
-		}
+			}
 
-	})
-	Rooms.create({title: str});
+		}
+		Rooms.create({title: str});
+
+	});
+
 }
 
 module.exports.router = router;
