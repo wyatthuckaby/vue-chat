@@ -100,11 +100,11 @@
 		},
 		sockets: {
 			user: function (name) {
-				var data = { user: name, message: 'Has joined the chat.' };
+				var data = { user: name.name, message: {body: 'Has joined the room.', type: 'text'} };
 				this.$store.dispatch('addMessage', data);
 			},
 			left: function (name) {
-				var data = { user: name, message: 'Has left the chat.' };
+				var data = { user:  name.name, message:  {body: 'Has left the room.', type: 'text'} };
 				this.$store.dispatch('addMessage', data);
 			},
 			message: function (data) {

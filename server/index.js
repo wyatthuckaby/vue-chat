@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
 		if (user.name) {
 			socket.user = user;
 			socket.join(user.room);
-			io.to(user.room).emit('user', socket.user.name);
+			io.to(socket.user.room).emit('join', socket.user);
 			console.log(socket.user);
 			roomRouter.addRoom(user.room);
 		}	
