@@ -1,5 +1,9 @@
 <template>
 	<div>
+		<div class="title">
+			<h3>tête-à-tête-à-tête</h3>
+			<h5>Three's a crowd.</h5>
+		</div>
 		<div v-if="!joined" class="text-center">
 			<form @submit.prevent="join">
 				<div class="form-group">
@@ -116,6 +120,22 @@
 </script>
 
 <style>
+
+	.title {
+		text-align: center;
+		color: slateblue;
+		font-family: 'Quicksand', sans-serif;
+		font-weight: bold;
+	}
+
+	.title h3 {
+		font-size: 50px;
+	}
+
+	.title h5 {
+		font-size: 20px;
+	}
+
 	#app {
 		font-family: 'Avenir', Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
