@@ -103,7 +103,8 @@
 			}
 		},
 		sockets: {
-			user: function (name) {
+			join: function (name) {
+				console.log("Joined");
 				var data = { user: name.name, message: {body: 'Has joined the room.', type: 'text'} };
 				this.$store.dispatch('addMessage', data);
 			},
